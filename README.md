@@ -108,9 +108,3 @@ open NeonSurge.html
 npx serve .
 # then visit http://localhost:3000/NeonSurge.html
 ```
-
----
-
-## License
-
-MIT — free to use, modify, and distribute.
