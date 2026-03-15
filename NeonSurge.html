@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+  <title>NEON SURGE</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <!-- NAV -->
+  <nav id="nav">
+    <span id="nav-logo">NEON SURGE</span>
+    <div id="nav-tabs">
+      <button class="nav-tab active" id="tab-play">&#9654; PLAY</button>
+      <button class="nav-tab" id="tab-lb">&#9670; LEADERBOARD</button>
+    </div>
+    <span id="nav-user"></span>
+  </nav>
+
+  <!-- GAME -->
+  <div id="game-area">
+    <div id="wrap"><canvas id="c"></canvas>
+      <div id="scanlines"></div>
+    </div>
+  </div>
+
+  <!-- LEADERBOARD -->
+  <div id="lb-panel">
+    <div class="lb-title">LEADERBOARD</div>
+    <div class="lb-filters">
+      <button class="lb-filter active" data-p="daily">DAILY</button>
+      <button class="lb-filter" data-p="weekly">WEEKLY</button>
+      <button class="lb-filter" data-p="alltime">ALL TIME</button>
+    </div>
+    <div class="lb-wrap">
+      <div id="lb-body"></div>
+    </div>
+  </div>
+
+  <!-- USERNAME MODAL -->
+  <div id="um">
+    <div class="um-box">
+      <div class="um-t1">NEON</div>
+      <div class="um-t2">SURGE</div>
+      <div class="um-desc">COLLECT CRYSTALS &middot; DODGE ENEMIES<br>CLIMB THE LEADERBOARD</div>
+      <div class="um-desc" style="margin-bottom:22px;color:rgba(255,255,255,0.3);">ENTER YOUR CALLSIGN TO BEGIN</div>
+      <input id="um-input" type="text" maxlength="12" placeholder="PLAYER_01" autocomplete="off" spellcheck="false">
+      <button id="um-btn">ENTER ARENA</button>
+      <div id="um-err"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>

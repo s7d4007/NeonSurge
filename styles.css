@@ -1,0 +1,367 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    background: #04040e;
+    overflow: hidden;
+    font-family: 'Press Start 2P', monospace;
+}
+
+/* ── NAV BAR ─────────────────────────────────────────────────────── */
+#nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 48px;
+    z-index: 100;
+    background: #04040e;
+    border-bottom: 1px solid rgba(0, 255, 229, 0.18);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 18px;
+}
+
+#nav-logo {
+    color: #00ffe5;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-shadow: 0 0 14px #00ffe5;
+    white-space: nowrap;
+}
+
+#nav-tabs {
+    display: flex;
+    gap: 6px;
+}
+
+.nav-tab {
+    background: transparent;
+    border: 1px solid rgba(0, 255, 229, 0.2);
+    color: rgba(0, 255, 229, 0.4);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    padding: 7px 13px;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all .15s;
+    white-space: nowrap;
+}
+
+.nav-tab:hover {
+    border-color: rgba(0, 255, 229, 0.5);
+    color: rgba(0, 255, 229, 0.7);
+}
+
+.nav-tab.active {
+    background: rgba(0, 255, 229, 0.1);
+    border-color: #00ffe5;
+    color: #00ffe5;
+    text-shadow: 0 0 8px #00ffe5;
+}
+
+#nav-user {
+    color: rgba(255, 0, 204, 0.85);
+    font-size: 7px;
+    text-shadow: 0 0 8px #ff00cc;
+    white-space: nowrap;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ── GAME AREA ───────────────────────────────────────────────────── */
+#game-area {
+    position: fixed;
+    top: 48px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#wrap {
+    position: relative;
+    touch-action: none;
+}
+
+canvas {
+    display: block;
+}
+
+#scanlines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0, 0, 0, 0.06) 3px, rgba(0, 0, 0, 0.06) 4px);
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* ── LEADERBOARD PANEL ───────────────────────────────────────────── */
+#lb-panel {
+    position: fixed;
+    top: 48px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #04040e;
+    overflow-y: auto;
+    display: none;
+    padding: 28px 20px 40px;
+}
+
+.lb-title {
+    text-align: center;
+    color: #00ffe5;
+    font-size: 13px;
+    text-shadow: 0 0 18px #00ffe5;
+    margin-bottom: 22px;
+    letter-spacing: 3px;
+}
+
+.lb-filters {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.lb-filter {
+    background: transparent;
+    border: 1px solid rgba(0, 255, 229, 0.2);
+    color: rgba(0, 255, 229, 0.4);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all .15s;
+}
+
+.lb-filter:hover {
+    border-color: rgba(0, 255, 229, 0.5);
+    color: rgba(0, 255, 229, 0.75);
+}
+
+.lb-filter.active {
+    background: rgba(0, 255, 229, 0.1);
+    border-color: #00ffe5;
+    color: #00ffe5;
+    text-shadow: 0 0 6px #00ffe5;
+}
+
+.lb-wrap {
+    max-width: 680px;
+    margin: 0 auto;
+}
+
+.lb-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.lb-table th {
+    color: rgba(0, 255, 229, 0.45);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 6px;
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid rgba(0, 255, 229, 0.12);
+    letter-spacing: 1px;
+}
+
+.lb-table th.r {
+    text-align: right;
+}
+
+.lb-table td {
+    color: rgba(255, 255, 255, 0.7);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    padding: 11px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    vertical-align: middle;
+}
+
+.lb-table td.r {
+    text-align: right;
+}
+
+.lb-table tr:hover td {
+    background: rgba(0, 255, 229, 0.03);
+}
+
+.r1 td {
+    color: #FFD700;
+}
+
+.r2 td {
+    color: #C8C8C8;
+}
+
+.r3 td {
+    color: #CD7F32;
+}
+
+.medal {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-size: 7px;
+    font-family: 'Press Start 2P', monospace;
+    margin-right: 8px;
+    flex-shrink: 0;
+    vertical-align: middle;
+}
+
+.m1 {
+    background: #FFD700;
+    color: #3a2800;
+}
+
+.m2 {
+    background: #C8C8C8;
+    color: #1a1a1a;
+}
+
+.m3 {
+    background: #CD7F32;
+    color: #2a0e00;
+}
+
+.pname {
+    display: inline-flex;
+    align-items: center;
+}
+
+.lb-score {
+    color: #00ffe5;
+    font-size: 8px;
+}
+
+.lb-lv {
+    color: rgba(255, 230, 0, 0.65);
+}
+
+.lb-empty {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.2);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    padding: 60px 20px;
+    line-height: 2.5;
+}
+
+/* ── USERNAME MODAL ──────────────────────────────────────────────── */
+#um {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(4, 4, 14, 0.97);
+    z-index: 300;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.um-box {
+    text-align: center;
+    max-width: 400px;
+    width: 88%;
+    border: 1px solid rgba(0, 255, 229, 0.22);
+    border-radius: 8px;
+    background: rgba(0, 255, 229, 0.025);
+    padding: 44px 30px 36px;
+}
+
+.um-t1 {
+    color: #00ffe5;
+    font-size: 20px;
+    text-shadow: 0 0 22px #00ffe5;
+    margin-bottom: 4px;
+}
+
+.um-t2 {
+    color: #ff00cc;
+    font-size: 16px;
+    text-shadow: 0 0 16px #ff00cc;
+    margin-bottom: 20px;
+}
+
+.um-desc {
+    color: rgba(0, 255, 229, 0.42);
+    font-size: 6px;
+    line-height: 2.2;
+    margin-bottom: 28px;
+}
+
+#um-input {
+    display: block;
+    width: 100%;
+    background: rgba(0, 255, 229, 0.06);
+    border: 1px solid rgba(0, 255, 229, 0.3);
+    border-radius: 4px;
+    color: #00ffe5;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 12px;
+    padding: 13px 16px;
+    text-align: center;
+    outline: none;
+    letter-spacing: 3px;
+    margin-bottom: 14px;
+}
+
+#um-input::placeholder {
+    color: rgba(0, 255, 229, 0.2);
+}
+
+#um-input:focus {
+    border-color: #00ffe5;
+    box-shadow: 0 0 14px rgba(0, 255, 229, 0.18);
+}
+
+#um-btn {
+    background: rgba(0, 255, 229, 0.1);
+    border: 1px solid #00ffe5;
+    color: #00ffe5;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    padding: 13px 36px;
+    cursor: pointer;
+    border-radius: 4px;
+    text-shadow: 0 0 8px #00ffe5;
+    transition: all .15s;
+    letter-spacing: 1px;
+}
+
+#um-btn:hover {
+    background: rgba(0, 255, 229, 0.2);
+    box-shadow: 0 0 18px rgba(0, 255, 229, 0.25);
+}
+
+#um-err {
+    color: #ff2244;
+    font-size: 6px;
+    margin-top: 10px;
+    height: 14px;
+}
