@@ -47,16 +47,27 @@ canvas.addEventListener('touchstart', e => {
     e.preventDefault(); const r = canvas.getBoundingClientRect();
     cursor.x = e.touches[0].clientX - r.left; cursor.y = e.touches[0].clientY - r.top;
     if (state === 'menu' || state === 'gameover') startGame();
+    else if (state === 'paused') state = 'playing';
 }, { passive: false });
 document.addEventListener('keydown', e => {
+    if (e.target && e.target.tagName === 'INPUT') {
+        if (e.code === 'Escape' && username) closeUsernameModal();
+        return;
+    }
     keys[e.code] = true;
-    if (e.code === 'KeyP' && (state === 'playing' || state === 'levelup')) { state = 'paused'; return; }
-    if (e.code === 'KeyR' && state === 'paused') { state = 'playing'; return; }
+    if (e.code === 'KeyP') {
+        if (state === 'playing' || state === 'levelup') { state = 'paused'; return; }
+        if (state === 'paused') { state = 'playing'; return; }
+    }
+    if ((e.code === 'KeyR' || e.code === 'Space') && state === 'paused') { state = 'playing'; return; }
     if (e.code === 'Escape' && state !== 'menu') { startGame(); return; }
     if ((e.code === 'Space' || e.code === 'Enter') && (state === 'menu' || state === 'gameover')) startGame();
 });
 document.addEventListener('keyup', e => { keys[e.code] = false; });
-canvas.addEventListener('click', () => { if (state === 'menu' || state === 'gameover') startGame(); });
+canvas.addEventListener('click', () => {
+    if (state === 'menu' || state === 'gameover') startGame();
+    else if (state === 'paused') state = 'playing';
+});
 
 // ─── NAV TABS ────────────────────────────────────────────────────────────────
 document.getElementById('tab-play').addEventListener('click', () => {
@@ -86,25 +97,72 @@ document.querySelectorAll('.lb-filter').forEach(btn => {
 });
 
 // ─── USERNAME MODAL ──────────────────────────────────────────────────────────
+function updateUserDisplay(name) {
+    const el = document.getElementById('nav-user');
+    el.textContent = name;
+    el.title = 'Click to change callsign';
+}
+
+function openUsernameModal(canCancel = Boolean(username)) {
+    if (state === 'playing' || state === 'levelup') {
+        state = 'paused';
+    }
+    const input = document.getElementById('um-input');
+    input.value = username || '';
+    document.getElementById('um-err').textContent = '';
+    const cancelBtn = document.getElementById('um-cancel');
+    if (cancelBtn) {
+        cancelBtn.style.display = canCancel ? 'inline-block' : 'none';
+    }
+    document.getElementById('um').style.display = 'flex';
+    setTimeout(() => {
+        input.focus();
+        input.select();
+    }, 100);
+}
+
+function closeUsernameModal() {
+    if (!username) return; // Must have a username on initial visit
+    document.getElementById('um').style.display = 'none';
+    document.getElementById('um-err').textContent = '';
+}
+
 function initUser() {
     const saved = localStorage.getItem('neonSurgeUser');
     if (saved) {
         username = saved;
-        document.getElementById('nav-user').textContent = saved;
+        updateUserDisplay(saved);
     } else {
-        document.getElementById('um').style.display = 'flex';
-        setTimeout(() => document.getElementById('um-input').focus(), 300);
+        openUsernameModal(false);
     }
 }
+
+document.getElementById('nav-user').addEventListener('click', () => {
+    openUsernameModal(true);
+});
 document.getElementById('um-btn').addEventListener('click', submitUsername);
-document.getElementById('um-input').addEventListener('keydown', e => { if (e.code === 'Enter') submitUsername(); });
+const cancelBtn = document.getElementById('um-cancel');
+if (cancelBtn) {
+    cancelBtn.addEventListener('click', closeUsernameModal);
+}
+document.getElementById('um').addEventListener('click', e => {
+    if (e.target.id === 'um' && username) {
+        closeUsernameModal();
+    }
+});
+document.getElementById('um-input').addEventListener('keydown', e => {
+    if (e.code === 'Enter') submitUsername();
+    if (e.code === 'Escape' && username) closeUsernameModal();
+});
+
 function submitUsername() {
     const val = document.getElementById('um-input').value.trim().toUpperCase().replace(/[^A-Z0-9_]/g, '');
     if (val.length < 2) { document.getElementById('um-err').textContent = 'MIN 2 CHARACTERS'; return; }
     username = val;
     localStorage.setItem('neonSurgeUser', val);
-    document.getElementById('nav-user').textContent = val;
-    document.getElementById('um').style.display = 'none';
+    updateUserDisplay(val);
+    closeUsernameModal();
+    if (activeTab === 'lb') renderLeaderboard();
 }
 
 // ─── LEADERBOARD ─────────────────────────────────────────────────────────────
@@ -511,7 +569,7 @@ function drawGame() {
     // PC shortcuts footer
     if (!isMobile()) {
         ctx.font = `${fs(5)}px "Press Start 2P",monospace`; ctx.fillStyle = 'rgba(0,255,229,0.20)';
-        ctx.textAlign = 'right'; ctx.fillText('[P] Pause   [R] Resume   [ESC] Restart', W - 14, H - 10); ctx.textAlign = 'left';
+        ctx.textAlign = 'right'; ctx.fillText('[P] Pause/Resume   [R] Resume   [ESC] Restart', W - 14, H - 10); ctx.textAlign = 'left';
     }
     // Drone counter footer
     ctx.font = `${fs(5)}px "Press Start 2P",monospace`; ctx.fillStyle = 'rgba(255,34,68,0.38)';
@@ -612,7 +670,7 @@ function drawPause() {
     ctx.fillStyle = 'rgba(0,0,0,0.74)'; ctx.fillRect(0, 0, W, H); ctx.textAlign = 'center';
     ctx.font = `${fs(24)}px "Press Start 2P",monospace`; glow(C.cyan, 26); ctx.fillStyle = C.cyan; ctx.fillText('PAUSED', W / 2, H / 2 - fs(44)); noGlow();
     ctx.strokeStyle = 'rgba(0,255,229,0.2)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(W * .2, H / 2 - fs(26)); ctx.lineTo(W * .8, H / 2 - fs(26)); ctx.stroke();
-    [{ key: 'R', label: 'Resume game', col: C.cyan }, { key: 'ESC', label: 'Restart', col: C.magenta }, { key: 'P', label: 'Pause toggle', col: C.yellow }]
+    [{ key: 'P', label: 'Resume / Pause', col: C.cyan }, { key: 'R', label: 'Resume game', col: C.yellow }, { key: 'ESC', label: 'Restart', col: C.magenta }]
         .forEach((r, i) => {
             const y = H / 2 - fs(6) + i * fs(28), bw = fs(36), bh = fs(20), bx = W / 2 - fs(80);
             ctx.fillStyle = 'rgba(0,255,229,0.12)'; ctx.beginPath(); ctx.roundRect(bx, y - fs(14), bw, bh, 4); ctx.fill();
@@ -689,7 +747,7 @@ function drawMenu() {
     });
     ctx.textBaseline = 'alphabetic';
 
-    if (!isMobile()) { ctx.font = `${fs(5)}px "Press Start 2P",monospace`; ctx.fillStyle = 'rgba(0,255,229,0.28)'; ctx.textAlign = 'center'; ctx.fillText('[P] Pause   [R] Resume   [ESC] Restart', W / 2, H * .94); }
+    if (!isMobile()) { ctx.font = `${fs(5)}px "Press Start 2P",monospace`; ctx.fillStyle = 'rgba(0,255,229,0.28)'; ctx.textAlign = 'center'; ctx.fillText('[P] Pause/Resume   [R] Resume   [ESC] Restart', W / 2, H * .94); }
     if (highScore > 0) { ctx.font = `${fs(8)}px "Press Start 2P",monospace`; glow(C.yellow, 8); ctx.fillStyle = C.yellow; ctx.textAlign = 'center'; ctx.fillText(`BEST: ${highScore}`, W / 2, H * .98); noGlow(); }
     ctx.textAlign = 'left';
 }

@@ -74,9 +74,22 @@ body {
     font-size: 7px;
     text-shadow: 0 0 8px #ff00cc;
     white-space: nowrap;
-    max-width: 120px;
+    max-width: 140px;
     overflow: hidden;
     text-overflow: ellipsis;
+    cursor: pointer;
+    padding: 6px 10px;
+    border: 1px solid rgba(255, 0, 204, 0.25);
+    border-radius: 3px;
+    transition: all .15s;
+    user-select: none;
+}
+
+#nav-user:hover {
+    color: #ff00cc;
+    border-color: rgba(255, 0, 204, 0.7);
+    box-shadow: 0 0 10px rgba(255, 0, 204, 0.3);
+    background: rgba(255, 0, 204, 0.08);
 }
 
 /* ── GAME AREA ───────────────────────────────────────────────────── */
@@ -340,13 +353,20 @@ canvas {
     box-shadow: 0 0 14px rgba(0, 255, 229, 0.18);
 }
 
+.um-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
 #um-btn {
     background: rgba(0, 255, 229, 0.1);
     border: 1px solid #00ffe5;
     color: #00ffe5;
     font-family: 'Press Start 2P', monospace;
     font-size: 9px;
-    padding: 13px 36px;
+    padding: 13px 28px;
     cursor: pointer;
     border-radius: 4px;
     text-shadow: 0 0 8px #00ffe5;
@@ -357,6 +377,25 @@ canvas {
 #um-btn:hover {
     background: rgba(0, 255, 229, 0.2);
     box-shadow: 0 0 18px rgba(0, 255, 229, 0.25);
+}
+
+#um-cancel {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: rgba(255, 255, 255, 0.6);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    padding: 13px 24px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all .15s;
+    letter-spacing: 1px;
+}
+
+#um-cancel:hover {
+    border-color: rgba(255, 255, 255, 0.6);
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.05);
 }
 
 #um-err {
